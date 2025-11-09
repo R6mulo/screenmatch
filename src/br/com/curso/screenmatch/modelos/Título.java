@@ -1,5 +1,8 @@
 package br.com.curso.screenmatch.modelos;
 
+import br.com.curso.screenmatch.excecao.ErroDeConversaoDeAnoException;
+import com.google.gson.annotations.SerializedName;
+
 public class Título implements Comparable<Título> {
     private String nome;
     private int anoDeLancamento;
@@ -11,6 +14,16 @@ public class Título implements Comparable<Título> {
     public Título(String nome, int anoDeLancamento) {
         this.nome = nome;
         this.anoDeLancamento = anoDeLancamento;
+    }
+
+    public Título(TítuloOmdb meuTituloOmdb) {
+        this.nome = meuTituloOmdb.title();
+        if (meuTituloOmdb.year().length() > 4) {
+            throw new ErroDeConversaoDeAnoException("Não consegui converter o ano " +
+                    "porque tem mais de 04 caracteres.");
+        }
+        this.anoDeLancamento = Integer.valueOf(meuTituloOmdb.year());
+        this.duracaoEmMinutos = Integer.valueOf(meuTituloOmdb.runtime().substring(0,2));
     }
 
     public String getNome() {
@@ -66,6 +79,13 @@ public class Título implements Comparable<Título> {
     @Override
     public int compareTo(Título outroTítulo) {
         return this.getNome().compareTo(outroTítulo.getNome());
+
     }
 
+    @Override
+    public String toString() {
+        return "(nome = " + nome +
+                ", anoDeLancamento = " + anoDeLancamento + ',' +
+                "Duração = " + duracaoEmMinutos + ")";
+    }
 }
